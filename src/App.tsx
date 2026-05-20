@@ -1,12 +1,17 @@
-import './App.css'
+import { RouterProvider } from 'react-router-dom';
+import { useEffect } from 'react';
+import { router } from './router';
+import { useThemeStore } from './store/theme.store';
 
 function App() {
-  
-  return (
-    <>
-    <h1 className='text-amber-500'>Welcome to my React App!</h1>
-    </>
-  )
+  const theme = useThemeStore((s) => s.theme);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
+
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
+
