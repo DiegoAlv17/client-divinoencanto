@@ -18,11 +18,11 @@ export default function Toaster() {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className="px-4 py-3 rounded-lg text-sm text-white shadow-lg flex items-center gap-3 min-w-[280px]"
-          style={{ backgroundColor: bgMap[toast.type] }}
+          className="px-5 py-3.5 rounded-xl text-sm text-white flex items-center gap-3 min-w-[300px]"
+          style={{ backgroundColor: bgMap[toast.type], boxShadow: 'var(--shadow-lg)' }}
         >
-          <span className="flex-1">{toast.message}</span>
-          <button onClick={() => dismiss(toast.id)} className="text-white/80 hover:text-white">
+          <span className="flex-1 font-medium">{toast.message}</span>
+          <button onClick={() => dismiss(toast.id)} className="text-white/70 hover:text-white text-lg leading-none">
             ×
           </button>
         </div>

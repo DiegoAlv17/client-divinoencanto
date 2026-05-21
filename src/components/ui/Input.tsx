@@ -11,7 +11,7 @@ export default function Input({ label, value, onChange, type = 'text', placehold
   return (
     <div className={`mb-4 ${className}`}>
       {label && (
-        <label className="block text-sm font-medium mb-1" style={{ color: 'var(--fg)' }}>
+        <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--fg-muted)' }}>
           {label}
         </label>
       )}
@@ -20,11 +20,12 @@ export default function Input({ label, value, onChange, type = 'text', placehold
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full px-3 py-2 rounded-lg text-sm outline-none focus:ring-2"
+        className="w-full px-4 py-2.5 rounded-lg text-sm outline-none transition-all duration-200 focus:ring-2"
         style={{
           backgroundColor: 'var(--bg)',
           border: '1px solid var(--border)',
           color: 'var(--fg)',
+          boxShadow: 'var(--shadow-sm)',
           // @ts-expect-error CSS custom property
           '--tw-ring-color': 'var(--accent)',
         }}

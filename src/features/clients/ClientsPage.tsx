@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import useSWR from 'swr';
 import { useNavigate } from 'react-router-dom';
 import { clientsApi } from '../../api/clients.api';
 import type { ClientResponse } from '../../types';
@@ -9,35 +10,27 @@ import ClientFormModal from './ClientFormModal';
 import { useToastStore } from '../../store/toast.store';
 
 export default function ClientsPage() {
-  const [clients, setClients] = useState<ClientResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: clients = [], isLoading, mutate } = useSWR('clients', clientsApi.findAll);
   const [editing, setEditing] = useState<ClientResponse | null>(null);
   const [showForm, setShowForm] = useState(false);
   const push = useToastStore((s) => s.push);
   const navigate = useNavigate();
 
-  const load = () => {
-    setLoading(true);
-    clientsApi.findAll().then(setClients).finally(() => setLoading(false));
-  };
-
-  useEffect(load, []);
-
   const handleDelete = async (id: number) => {
     try {
       await clientsApi.delete(id);
       push('Cliente eliminado', 'success');
-      load();
+      mutate();
     } catch {
       push('Error al eliminar', 'error');
     }
   };
 
-  if (loading) return <div className="flex justify-center py-12"><Spinner size="lg" /></div>;
+  if (isLoading) return <div className="flex justify-center py-16"><Spinner size="lg" /></div>;
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-heading)', color: 'var(--fg)' }}>Clientes</h1>
         <Button onClick={() => { setEditing(null); setShowForm(true); }}>Nuevo Cliente</Button>
       </div>
@@ -49,10 +42,10 @@ export default function ClientsPage() {
           { key: 'phone', header: 'Teléfono' },
           {
             key: 'actions', header: '', render: (r) => (
-              <div className="flex gap-2">
-                <button onClick={() => navigate(`/clients/${r.id}`)} className="text-sm underline" style={{ color: 'var(--primary)' }}>Deudas</button>
-                <button onClick={() => { setEditing(r); setShowForm(true); }} className="text-sm underline" style={{ color: 'var(--accent)' }}>Editar</button>
-                <button onClick={() => handleDelete(r.id)} className="text-sm underline" style={{ color: 'var(--danger)' }}>Eliminar</button>
+              <div className="flex gap-3">
+                <button onClick={() => navigate(`/clients/${r.id}`)} className="text-sm font-medium" style={{ color: 'var(--primary)' }}>Deudas</button>
+                <button onClick={() => { setEditing(r); setShowForm(true); }} className="text-sm font-medium" style={{ color: 'var(--accent)' }}>Editar</button>
+                <button onClick={() => handleDelete(r.id)} className="text-sm font-medium" style={{ color: 'var(--danger)' }}>Eliminar</button>
               </div>
             ),
           },
@@ -64,7 +57,7 @@ export default function ClientsPage() {
         <ClientFormModal
           client={editing}
           onClose={() => setShowForm(false)}
-          onSaved={load}
+          onSaved={() => mutate()}
         />
       )}
     </div>

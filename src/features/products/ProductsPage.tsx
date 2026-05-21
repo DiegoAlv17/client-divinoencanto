@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import useSWR from 'swr';
 import { productsApi } from '../../api/products.api';
 import type { ProductResponse } from '../../types';
 import Table from '../../components/ui/Table';
@@ -9,34 +10,26 @@ import ProductFormModal from './ProductFormModal';
 import { useToastStore } from '../../store/toast.store';
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<ProductResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: products = [], isLoading, mutate } = useSWR('products', productsApi.findAll);
   const [editing, setEditing] = useState<ProductResponse | null>(null);
   const [showForm, setShowForm] = useState(false);
   const push = useToastStore((s) => s.push);
-
-  const load = () => {
-    setLoading(true);
-    productsApi.findAll().then(setProducts).finally(() => setLoading(false));
-  };
-
-  useEffect(load, []);
 
   const handleDelete = async (id: number) => {
     try {
       await productsApi.delete(id);
       push('Producto eliminado', 'success');
-      load();
+      mutate();
     } catch {
       push('Error al eliminar', 'error');
     }
   };
 
-  if (loading) return <div className="flex justify-center py-12"><Spinner size="lg" /></div>;
+  if (isLoading) return <div className="flex justify-center py-16"><Spinner size="lg" /></div>;
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-heading)', color: 'var(--fg)' }}>Productos</h1>
         <Button onClick={() => { setEditing(null); setShowForm(true); }}>Nuevo Producto</Button>
       </div>
@@ -49,9 +42,9 @@ export default function ProductsPage() {
           { key: 'active', header: 'Estado', render: (r) => <Badge variant={r.active ? 'success' : 'danger'}>{r.active ? 'Activo' : 'Inactivo'}</Badge> },
           {
             key: 'actions', header: '', render: (r) => (
-              <div className="flex gap-2">
-                <button onClick={() => { setEditing(r); setShowForm(true); }} className="text-sm underline" style={{ color: 'var(--accent)' }}>Editar</button>
-                <button onClick={() => handleDelete(r.id)} className="text-sm underline" style={{ color: 'var(--danger)' }}>Eliminar</button>
+              <div className="flex gap-3">
+                <button onClick={() => { setEditing(r); setShowForm(true); }} className="text-sm font-medium transition-colors" style={{ color: 'var(--accent)' }}>Editar</button>
+                <button onClick={() => handleDelete(r.id)} className="text-sm font-medium transition-colors" style={{ color: 'var(--danger)' }}>Eliminar</button>
               </div>
             ),
           },
@@ -63,7 +56,7 @@ export default function ProductsPage() {
         <ProductFormModal
           product={editing}
           onClose={() => setShowForm(false)}
-          onSaved={load}
+          onSaved={() => mutate()}
         />
       )}
     </div>

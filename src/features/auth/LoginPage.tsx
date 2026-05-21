@@ -29,16 +29,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg)' }}>
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--bg)' }}>
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm p-8 rounded-2xl shadow-lg"
-        style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border)' }}
+        className="w-full max-w-sm p-8 rounded-2xl"
+        style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-lg)' }}
       >
-        <h1 className="text-3xl font-bold text-center mb-6" style={{ fontFamily: 'var(--font-heading)', color: 'var(--primary)' }}>
+        <h1 className="text-3xl font-bold text-center mb-2" style={{ fontFamily: 'var(--font-heading)', color: 'var(--primary)' }}>
           Divino Encanto
         </h1>
-        <p className="text-center mb-6" style={{ color: 'var(--fg-muted)' }}>Inicia sesión para continuar</p>
+        <p className="text-center mb-8 text-sm" style={{ color: 'var(--fg-muted)' }}>Inicia sesión para continuar</p>
 
         <Input label="Usuario" value={username} onChange={setUsername} placeholder="Tu usuario" />
         <Input label="Contraseña" value={password} onChange={setPassword} type="password" placeholder="••••••••" />

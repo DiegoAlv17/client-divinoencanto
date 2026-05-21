@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import useSWR from 'swr';
 import { productsApi } from '../../api/products.api';
 import { categoriesApi } from '../../api/categories.api';
-import type { ProductResponse, CategoryResponse } from '../../types';
+import type { ProductResponse } from '../../types';
 import { useToastStore } from '../../store/toast.store';
 import Modal from '../../components/ui/Modal';
 import Input from '../../components/ui/Input';
@@ -15,7 +16,7 @@ interface Props {
 
 export default function ProductFormModal({ product, onClose, onSaved }: Props) {
   const push = useToastStore((s) => s.push);
-  const [categories, setCategories] = useState<CategoryResponse[]>([]);
+  const { data: categories = [] } = useSWR('categories', categoriesApi.findAll);
   const [name, setName] = useState(product?.name ?? '');
   const [description, setDescription] = useState(product?.description ?? '');
   const [price, setPrice] = useState(product?.price.toString() ?? '');
@@ -24,10 +25,6 @@ export default function ProductFormModal({ product, onClose, onSaved }: Props) {
   const [active, setActive] = useState(product?.active ?? true);
   const [categoryId, setCategoryId] = useState(product?.categoryId?.toString() ?? '');
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    categoriesApi.findAll().then(setCategories);
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
