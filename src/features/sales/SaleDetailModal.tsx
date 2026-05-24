@@ -11,7 +11,7 @@ export default function SaleDetailModal({ sale, onClose }: Props) {
     <Modal open onClose={onClose} title={`Venta #${sale.id}`}>
       <div className="space-y-2 mb-4">
         <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>Fecha: {sale.saleDate}</p>
-        <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>Cliente ID: {sale.clientId}</p>
+        <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>Cliente: {sale.clientName}</p>
         {sale.notes && <p className="text-sm" style={{ color: 'var(--fg-muted)' }}>Notas: {sale.notes}</p>}
       </div>
 
@@ -22,7 +22,7 @@ export default function SaleDetailModal({ sale, onClose }: Props) {
             className="flex justify-between p-2 rounded-lg text-sm"
             style={{ backgroundColor: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--fg)' }}
           >
-            <span>Producto #{item.productId} × {item.quantity}</span>
+            <span>{item.productName} × {item.quantity}</span>
             <span>${item.subTotal.toFixed(2)}</span>
           </div>
         ))}

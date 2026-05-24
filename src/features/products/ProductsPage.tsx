@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import useSWR from 'swr';
+import { useNavigate } from 'react-router-dom';
 import { productsApi } from '../../api/products.api';
 import type { ProductResponse } from '../../types';
 import Table from '../../components/ui/Table';
@@ -13,7 +14,15 @@ export default function ProductsPage() {
   const { data: products = [], isLoading, mutate } = useSWR('products', productsApi.findAll);
   const [editing, setEditing] = useState<ProductResponse | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [search, setSearch] = useState('');
   const push = useToastStore((s) => s.push);
+  const navigate = useNavigate();
+
+  const filtered = products.filter((p) => {
+    const q = search.toLowerCase();
+    return p.name.toLowerCase().includes(q) ||
+      p.description?.toLowerCase().includes(q);
+  });
 
   const handleDelete = async (id: number) => {
     try {
@@ -34,6 +43,17 @@ export default function ProductsPage() {
         <Button onClick={() => { setEditing(null); setShowForm(true); }}>Nuevo Producto</Button>
       </div>
 
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Buscar por nombre o descripción..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full max-w-sm px-4 py-2.5 rounded-lg text-sm outline-none transition-colors"
+          style={{ backgroundColor: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--fg)' }}
+        />
+      </div>
+
       <Table
         columns={[
           { key: 'name', header: 'Nombre' },
@@ -43,13 +63,14 @@ export default function ProductsPage() {
           {
             key: 'actions', header: '', render: (r) => (
               <div className="flex gap-3">
-                <button onClick={() => { setEditing(r); setShowForm(true); }} className="text-sm font-medium transition-colors" style={{ color: 'var(--accent)' }}>Editar</button>
-                <button onClick={() => handleDelete(r.id)} className="text-sm font-medium transition-colors" style={{ color: 'var(--danger)' }}>Eliminar</button>
+                <button onClick={(e) => { e.stopPropagation(); setEditing(r); setShowForm(true); }} className="text-sm font-medium transition-colors" style={{ color: 'var(--accent)' }}>Editar</button>
+                <button onClick={(e) => { e.stopPropagation(); handleDelete(r.id); }} className="text-sm font-medium transition-colors" style={{ color: 'var(--danger)' }}>Eliminar</button>
               </div>
             ),
           },
         ]}
-        data={products}
+        data={filtered}
+        onRowClick={(r) => navigate(`/products/${r.id}`)}
       />
 
       {showForm && (

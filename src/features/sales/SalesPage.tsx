@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import useSWR from 'swr';
+import { useNavigate } from 'react-router-dom';
 import { salesApi } from '../../api/sales.api';
 import type { SaleResponse } from '../../types';
 import Table from '../../components/ui/Table';
+import Button from '../../components/ui/Button';
 import Spinner from '../../components/ui/Spinner';
 import SaleDetailModal from './SaleDetailModal';
 
@@ -12,6 +14,7 @@ export default function SalesPage() {
   const [to, setTo] = useState('');
   const [appliedFrom, setAppliedFrom] = useState('');
   const [appliedTo, setAppliedTo] = useState('');
+  const navigate = useNavigate();
 
   const key = appliedFrom && appliedTo
     ? (['sales/date-range', appliedFrom, appliedTo] as const)
@@ -40,7 +43,10 @@ export default function SalesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6" style={{ fontFamily: 'var(--font-heading)', color: 'var(--fg)' }}>Ventas</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-heading)', color: 'var(--fg)' }}>Ventas</h1>
+        <Button onClick={() => navigate('/sales/add')}>Agregar Venta</Button>
+      </div>
 
       <div
         className="flex gap-3 mb-8 items-end flex-wrap p-4 rounded-xl"
@@ -86,9 +92,8 @@ export default function SalesPage() {
 
       <Table
         columns={[
-          { key: 'id', header: 'ID' },
           { key: 'saleDate', header: 'Fecha' },
-          { key: 'clientId', header: 'Cliente ID' },
+          { key: 'clientName', header: 'Cliente' },
           { key: 'totalAmount', header: 'Total', render: (r) => `$${r.totalAmount.toFixed(2)}` },
         ]}
         data={sales}

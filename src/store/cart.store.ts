@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type { ProductResponse } from '../types';
 
 export interface CartItem {
@@ -15,7 +16,7 @@ interface CartState {
   total: () => number;
 }
 
-export const useCartStore = create<CartState>((set, get) => ({
+export const useCartStore = create<CartState>()(persist((set, get) => ({
   items: [],
   addItem: (product) =>
     set((state) => {
@@ -47,4 +48,4 @@ export const useCartStore = create<CartState>((set, get) => ({
   clear: () => set({ items: [] }),
   total: () =>
     get().items.reduce((sum, i) => sum + i.product.price * i.quantity, 0),
-}));
+}), { name: 'cart-storage' }));

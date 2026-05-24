@@ -19,4 +19,7 @@ export const salesApi = {
 
   delete: (id: number) =>
     apiClient.delete(`/api/sales/${id}`),
+
+  cancelDebt: (saleItemId: number) =>
+    apiClient.delete(`/api/dues/sale-item/${saleItemId}`),
 };

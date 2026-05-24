@@ -13,8 +13,16 @@ export default function ClientsPage() {
   const { data: clients = [], isLoading, mutate } = useSWR('clients', clientsApi.findAll);
   const [editing, setEditing] = useState<ClientResponse | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [search, setSearch] = useState('');
   const push = useToastStore((s) => s.push);
   const navigate = useNavigate();
+
+  const filtered = clients.filter((c) => {
+    const q = search.toLowerCase();
+    return `${c.name} ${c.lastname}`.toLowerCase().includes(q) ||
+      c.email?.toLowerCase().includes(q) ||
+      c.phone?.toLowerCase().includes(q);
+  });
 
   const handleDelete = async (id: number) => {
     try {
@@ -35,22 +43,34 @@ export default function ClientsPage() {
         <Button onClick={() => { setEditing(null); setShowForm(true); }}>Nuevo Cliente</Button>
       </div>
 
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Buscar por nombre, email o teléfono..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full max-w-sm px-4 py-2.5 rounded-lg text-sm outline-none transition-colors"
+          style={{ backgroundColor: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--fg)' }}
+        />
+      </div>
+
       <Table
         columns={[
           { key: 'name', header: 'Nombre', render: (r) => `${r.name} ${r.lastname}` },
+          { key: 'type', header: 'Tipo', render: (r) => r.type === 'student' ? 'Estudiante' : r.type === 'teacher' ? 'Profesor' : 'Cliente' },
           { key: 'email', header: 'Email' },
           { key: 'phone', header: 'Teléfono' },
           {
             key: 'actions', header: '', render: (r) => (
               <div className="flex gap-3">
-                <button onClick={() => navigate(`/clients/${r.id}`)} className="text-sm font-medium" style={{ color: 'var(--primary)' }}>Deudas</button>
-                <button onClick={() => { setEditing(r); setShowForm(true); }} className="text-sm font-medium" style={{ color: 'var(--accent)' }}>Editar</button>
-                <button onClick={() => handleDelete(r.id)} className="text-sm font-medium" style={{ color: 'var(--danger)' }}>Eliminar</button>
+                <button onClick={(e) => { e.stopPropagation(); setEditing(r); setShowForm(true); }} className="text-sm font-medium" style={{ color: 'var(--accent)' }}>Editar</button>
+                <button onClick={(e) => { e.stopPropagation(); handleDelete(r.id); }} className="text-sm font-medium" style={{ color: 'var(--danger)' }}>Eliminar</button>
               </div>
             ),
           },
         ]}
-        data={clients}
+        data={filtered}
+        onRowClick={(r) => navigate(`/clients/${r.id}`)}
       />
 
       {showForm && (
