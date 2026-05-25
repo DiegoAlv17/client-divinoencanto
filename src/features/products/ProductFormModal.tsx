@@ -6,17 +6,13 @@ import type { ProductResponse } from '../../types';
 import { useToastStore } from '../../store/toast.store';
 import { extractApiError } from '../../utils/api-error';
 import { validateRequired, validatePositiveNumber, hasErrors, type ValidationResult } from '../../utils/validators';
+import { resolveImageUrl } from '../../utils/image-url';
 import Modal from '../../components/ui/Modal';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 
-const API_URL = import.meta.env.VITE_API_URL as string;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
-
-function resolveImageUrl(url: string): string {
-  return url.startsWith('http') ? url : `${API_URL}${url}`;
-}
 
 interface Props {
   product: ProductResponse | null;

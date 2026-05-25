@@ -4,12 +4,7 @@ import { productsApi } from '../../api/products.api';
 import { categoriesApi } from '../../api/categories.api';
 import Spinner from '../../components/ui/Spinner';
 import Badge from '../../components/ui/Badge';
-
-const API_URL = import.meta.env.VITE_API_URL as string;
-
-function resolveImageUrl(url: string): string {
-  return url.startsWith('http') ? url : `${API_URL}${url}`;
-}
+import { resolveImageUrl } from '../../utils/image-url';
 
 export default function ProductDetailView() {
   const { id } = useParams<{ id: string }>();

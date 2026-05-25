@@ -1,5 +1,6 @@
 import type { ProductResponse } from '../../../types';
 import { useCartStore } from '../../../store/cart.store';
+import { resolveImageUrl } from '../../../utils/image-url';
 
 interface Props {
   product: ProductResponse;
@@ -18,7 +19,7 @@ export default function ProductCard({ product }: Props) {
     >
       {product.imageUrl ? (
         <img
-          src={product.imageUrl}
+          src={resolveImageUrl(product.imageUrl)}
           alt={product.name}
           className="w-full h-28 object-cover rounded-lg mb-3"
           style={{ border: '1px solid var(--border)' }}
