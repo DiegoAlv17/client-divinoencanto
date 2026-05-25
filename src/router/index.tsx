@@ -12,6 +12,7 @@ import ClientDebtView from '../features/clients/ClientDebtView';
 import SalesPage from '../features/sales/SalesPage';
 import AddSalePage from '../features/sales/AddSalePage';
 import DashboardPage from '../features/dashboard/DashboardPage';
+import NotFoundPage from '../features/errors/NotFoundPage';
 
 function ProtectedRoute() {
   const token = useAuthStore((s) => s.token);
@@ -53,4 +54,5 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  { path: '*', element: <NotFoundPage /> },
 ]);

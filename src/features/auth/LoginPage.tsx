@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import { authApi } from '../../api/auth.api';
 import { useAuthStore } from '../../store/auth.store';
-import { useToastStore } from '../../store/toast.store';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 
@@ -10,19 +10,22 @@ export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const setAuth = useAuthStore((s) => s.setAuth);
-  const push = useToastStore((s) => s.push);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     setLoading(true);
     try {
       const res = await authApi.login({ username, password });
       setAuth(res.token, res.username, res.role);
       navigate('/pos');
-    } catch {
-      push('Credenciales inválidas', 'error');
+    } catch (err) {
+      const axiosErr = err as AxiosError<{ message?: string }>;
+      const message = axiosErr.response?.data?.message || 'Error al conectar con el servidor';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -39,6 +42,15 @@ export default function LoginPage() {
           Divino Encanto
         </h1>
         <p className="text-center mb-8 text-sm" style={{ color: 'var(--fg-muted)' }}>Inicia sesión para continuar</p>
+
+        {error && (
+          <div
+            className="mb-4 px-4 py-3 rounded-lg text-sm font-medium"
+            style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid var(--danger)', color: 'var(--danger)' }}
+          >
+            {error}
+          </div>
+        )}
 
         <Input label="Usuario" value={username} onChange={setUsername} placeholder="Tu usuario" />
         <Input label="Contraseña" value={password} onChange={setPassword} type="password" placeholder="••••••••" />
