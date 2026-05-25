@@ -47,6 +47,12 @@ export interface ClientResponse {
   email: string;
   phone: string;
   address: string;
+  type: 'client' | 'student' | 'teacher';
+  grade: string | null;
+  parent: string | null;
+  parentPhone: string | null;
+  parentEmail: string | null;
+  area: string | null;
 }
 
 export interface CreateClientRequest {
@@ -55,6 +61,12 @@ export interface CreateClientRequest {
   email?: string;
   phone?: string;
   address?: string;
+  type?: string;
+  grade?: string;
+  parent?: string;
+  parentPhone?: string;
+  parentEmail?: string;
+  area?: string;
 }
 
 export interface UpdateClientRequest {
@@ -63,6 +75,12 @@ export interface UpdateClientRequest {
   email?: string;
   phone?: string;
   address?: string;
+  type?: string;
+  grade?: string;
+  parent?: string;
+  parentPhone?: string;
+  parentEmail?: string;
+  area?: string;
 }
 
 // Product
@@ -104,6 +122,7 @@ export interface SaleResponse {
   totalAmount: number;
   notes: string;
   clientId: number;
+  clientName: string;
   items: SaleItemResponse[];
 }
 
@@ -112,6 +131,7 @@ export interface SaleItemResponse {
   quantity: number;
   subTotal: number;
   productId: number;
+  productName: string;
   difference: number;
 }
 
@@ -150,6 +170,9 @@ export interface CheckoutRequest {
   clientId: number;
   notes?: string;
   items: CartItemRequest[];
+  amountPaid?: number;
+  dueDate?: string;
+  saleDate?: string;
 }
 
 export interface CartItemRequest {
