@@ -7,7 +7,7 @@ const links = [
   { to: '/clients', label: 'Clientes', icon: '◎' },
   { to: '/products', label: 'Productos', icon: '◆' },
   { to: '/categories', label: 'Categorías', icon: '◇' },
-  { to: '/reports', label: 'Reportes', icon: '▣' },
+  { to: '/dashboard', label: 'Dashboard', icon: '▣' },
 ];
 
 export default function Sidebar() {
@@ -26,16 +26,21 @@ export default function Sidebar() {
       }}
     >
       <div className="border-b px-4 py-5 flex items-center" style={{ borderColor: 'var(--border)', justifyContent: collapsed ? 'center' : 'space-between' }}>
-        {!collapsed && (
-          <div>
-            <h2
-              className="text-xl font-bold tracking-tight leading-tight"
-              style={{ fontFamily: 'var(--font-heading)', color: 'var(--primary)' }}
-            >
-              Divino Encanto
-            </h2>
-            <p className="mt-1 text-xs leading-relaxed" style={{ color: 'var(--fg-muted)' }}>Sistema de gestión</p>
+        {!collapsed ? (
+          <div className="flex items-center gap-3">
+            <img src="/logo.png" alt="Divino Encanto" className="w-9 h-9 rounded-lg object-cover" />
+            <div>
+              <h2
+                className="text-xl font-bold tracking-tight leading-tight"
+                style={{ fontFamily: 'var(--font-heading)', color: 'var(--primary)' }}
+              >
+                Divino Encanto
+              </h2>
+              <p className="mt-1 text-xs leading-relaxed" style={{ color: 'var(--fg-muted)' }}>Sistema de gestión</p>
+            </div>
           </div>
+        ) : (
+          <img src="/logo.png" alt="Divino Encanto" className="w-9 h-9 rounded-lg object-cover" />
         )}
         <button
           onClick={toggle}

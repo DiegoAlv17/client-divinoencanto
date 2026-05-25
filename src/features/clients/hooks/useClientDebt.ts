@@ -18,15 +18,12 @@ export function useClientDebt(clientId: number | null) {
   );
 
   const salesWithDebt = useMemo(
-    () => sales.filter((sale) => sale.items.some((item) => item.difference > 0)),
+    () => sales.filter((sale) => sale.difference > 0),
     [sales]
   );
 
   const totalDebt = useMemo(
-    () => salesWithDebt.reduce(
-      (sum, sale) => sum + sale.items.reduce((s, item) => s + (item.difference > 0 ? item.difference : 0), 0),
-      0
-    ),
+    () => salesWithDebt.reduce((sum, sale) => sum + sale.difference, 0),
     [salesWithDebt]
   );
 
@@ -44,7 +41,7 @@ export function useClientDebt(clientId: number | null) {
 export function filterSales(sales: SaleResponse[], salesWithDebt: SaleResponse[], filter: Filter): SaleResponse[] {
   switch (filter) {
     case 'debt': return salesWithDebt;
-    case 'paid': return sales.filter((sale) => sale.items.every((item) => item.difference === 0));
+    case 'paid': return sales.filter((sale) => sale.difference === 0);
     default: return sales;
   }
 }

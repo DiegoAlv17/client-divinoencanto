@@ -11,7 +11,7 @@ import ClientsPage from '../features/clients/ClientsPage';
 import ClientDebtView from '../features/clients/ClientDebtView';
 import SalesPage from '../features/sales/SalesPage';
 import AddSalePage from '../features/sales/AddSalePage';
-import ReportsPage from '../features/reports/ReportsPage';
+import DashboardPage from '../features/dashboard/DashboardPage';
 
 function ProtectedRoute() {
   const token = useAuthStore((s) => s.token);
@@ -48,7 +48,7 @@ export const router = createBrowserRouter([
           { path: '/products', element: <ProductsPage /> },
           { path: '/products/:id', element: <ProductDetailView /> },
           { path: '/categories', element: <CategoriesPage /> },
-          { path: '/reports', element: <ReportsPage /> },
+          { path: '/dashboard', element: <DashboardPage /> },
         ],
       },
     ],

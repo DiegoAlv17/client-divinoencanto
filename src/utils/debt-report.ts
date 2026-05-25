@@ -7,20 +7,13 @@ interface DebtReportData {
 }
 
 export function generateDebtReportHtml({ client, salesWithDebt, totalDebt }: DebtReportData): string {
-  const debtItems = salesWithDebt.flatMap((sale) =>
-    sale.items
-      .filter((item) => item.difference > 0)
-      .map((item) => ({ ...item, saleDate: sale.saleDate, saleId: sale.id }))
-  );
-
-  const rows = debtItems.map((item) => `
+  const rows = salesWithDebt.map((sale) => `
     <tr>
-      <td>${item.saleDate}</td>
-      <td>#${item.saleId}</td>
-      <td>${item.productName}</td>
-      <td>${item.quantity}</td>
-      <td>$${item.subTotal.toFixed(2)}</td>
-      <td class="debt">$${item.difference.toFixed(2)}</td>
+      <td>${sale.saleDate}</td>
+      <td>#${sale.id}</td>
+      <td>${sale.items.map((i) => `${i.productName} ×${i.quantity}`).join(', ')}</td>
+      <td>$${sale.totalAmount.toFixed(2)}</td>
+      <td class="debt">$${sale.difference.toFixed(2)}</td>
     </tr>`).join('');
 
   return `<!DOCTYPE html>
@@ -29,6 +22,7 @@ export function generateDebtReportHtml({ client, salesWithDebt, totalDebt }: Deb
   <title>Reporte de Deuda - ${client.name} ${client.lastname}</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; padding: 40px; color: #2C1810; }
+    .banner { width: 100%; max-height: 120px; object-fit: contain; margin-bottom: 24px; }
     h1 { font-size: 22px; margin-bottom: 4px; }
     .subtitle { color: #7A6555; font-size: 13px; margin-bottom: 24px; }
     .info { display: flex; gap: 32px; margin-bottom: 24px; font-size: 13px; }
@@ -45,6 +39,7 @@ export function generateDebtReportHtml({ client, salesWithDebt, totalDebt }: Deb
   </style>
 </head>
 <body>
+  <img src="/CAFETIN _DIVINO_SABORaaa.png" alt="Banner" class="banner" />
   <h1>Reporte de Deuda</h1>
   <p class="subtitle">${client.name} ${client.lastname}</p>
   <div class="info">
@@ -58,7 +53,7 @@ export function generateDebtReportHtml({ client, salesWithDebt, totalDebt }: Deb
   </div>
   <table>
     <thead>
-      <tr><th>Fecha</th><th>Venta</th><th>Producto</th><th>Cant.</th><th>Subtotal</th><th>Debe</th></tr>
+      <tr><th>Fecha</th><th>Venta</th><th>Productos</th><th>Total</th><th>Debe</th></tr>
     </thead>
     <tbody>${rows}</tbody>
   </table>

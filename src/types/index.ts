@@ -120,10 +120,12 @@ export interface SaleResponse {
   id: number;
   saleDate: string;
   totalAmount: number;
+  difference: number;
   notes: string;
   clientId: number;
   clientName: string;
   items: SaleItemResponse[];
+  createdAt: string | null;
 }
 
 export interface SaleItemResponse {
@@ -132,7 +134,6 @@ export interface SaleItemResponse {
   subTotal: number;
   productId: number;
   productName: string;
-  difference: number;
 }
 
 export interface CreateSaleRequest {
@@ -189,7 +190,7 @@ export interface CheckoutResponse {
 export interface Due {
   id: number;
   endDate: string;
-  saleItemId: number;
+  saleId: number;
 }
 
 // Error
@@ -198,4 +199,47 @@ export interface ApiError {
   status: number;
   error: string;
   message: string;
+}
+
+// Statistics
+export interface MonthlySales {
+  year: number;
+  month: number;
+  label: string;
+  total: number;
+  count: number;
+}
+
+export interface TopProduct {
+  productId: number;
+  productName: string;
+  totalQuantity: number;
+  totalRevenue: number;
+}
+
+export interface CategorySales {
+  categoryId: number;
+  categoryName: string;
+  totalRevenue: number;
+  totalQuantity: number;
+}
+
+export interface DailySales {
+  date: string;
+  total: number;
+  count: number;
+}
+
+export interface StatisticsResponse {
+  totalSales: number;
+  totalDebt: number;
+  totalDebtorClients: number;
+  totalSalesCount: number;
+  totalProductsCount: number;
+  totalClientsCount: number;
+  averageTicket: number;
+  salesByMonth: MonthlySales[];
+  topProducts: TopProduct[];
+  salesByCategory: CategorySales[];
+  salesLast30Days: DailySales[];
 }

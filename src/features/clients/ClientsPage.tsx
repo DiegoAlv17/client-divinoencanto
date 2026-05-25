@@ -7,12 +7,14 @@ import Table from '../../components/ui/Table';
 import Button from '../../components/ui/Button';
 import Spinner from '../../components/ui/Spinner';
 import ClientFormModal from './ClientFormModal';
+import BulkUploadModal from '../../components/shared/BulkUploadModal';
 import { useToastStore } from '../../store/toast.store';
 
 export default function ClientsPage() {
   const { data: clients = [], isLoading, mutate } = useSWR('clients', clientsApi.findAll);
   const [editing, setEditing] = useState<ClientResponse | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [showBulk, setShowBulk] = useState(false);
   const [search, setSearch] = useState('');
   const push = useToastStore((s) => s.push);
   const navigate = useNavigate();
@@ -40,7 +42,10 @@ export default function ClientsPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-heading)', color: 'var(--fg)' }}>Clientes</h1>
-        <Button onClick={() => { setEditing(null); setShowForm(true); }}>Nuevo Cliente</Button>
+        <div className="flex gap-3">
+          <Button variant="secondary" onClick={() => setShowBulk(true)}>Carga Masiva</Button>
+          <Button onClick={() => { setEditing(null); setShowForm(true); }}>Nuevo Cliente</Button>
+        </div>
       </div>
 
       <div className="mb-6">
@@ -78,6 +83,14 @@ export default function ClientsPage() {
           client={editing}
           onClose={() => setShowForm(false)}
           onSaved={() => mutate()}
+        />
+      )}
+
+      {showBulk && (
+        <BulkUploadModal
+          type="clients"
+          onClose={() => setShowBulk(false)}
+          onSuccess={() => mutate()}
         />
       )}
     </div>

@@ -23,9 +23,9 @@ export default function ClientDebtView() {
     [sales, salesWithDebt, filter]
   );
 
-  const handleCancelDebt = async (saleItemId: number) => {
+  const handleCancelDebt = async (saleId: number) => {
     try {
-      await salesApi.cancelDebt(saleItemId);
+      await salesApi.cancelDebt(saleId);
       push('Deuda cancelada', 'success');
       mutate();
     } catch {
@@ -137,7 +137,7 @@ export default function ClientDebtView() {
       ) : (
         <div className="space-y-4">
           {filteredSales.map((sale) => {
-            const hasDebt = sale.items.some((item) => item.difference > 0);
+            const hasDebt = sale.difference > 0;
             return (
               <div
                 key={sale.id}
@@ -160,25 +160,21 @@ export default function ClientDebtView() {
                   {sale.items.map((item) => (
                     <div key={item.id} className="flex items-center justify-between text-sm" style={{ color: 'var(--fg-muted)' }}>
                       <span>{item.productName} × {item.quantity} — ${item.subTotal.toFixed(2)}</span>
-                      <div className="flex items-center gap-3">
-                        {item.difference > 0 ? (
-                          <>
-                            <span style={{ color: 'var(--danger)' }}>Debe: ${item.difference.toFixed(2)}</span>
-                            <button
-                              onClick={() => handleCancelDebt(item.id)}
-                              className="px-2 py-1 rounded text-xs font-medium transition-opacity hover:opacity-80"
-                              style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 15%, var(--bg))', color: 'var(--accent)' }}
-                            >
-                              Marcar pagado
-                            </button>
-                          </>
-                        ) : (
-                          <span style={{ color: 'var(--fg-muted)', opacity: 0.6 }}>Pagado</span>
-                        )}
-                      </div>
                     </div>
                   ))}
                 </div>
+                {hasDebt && (
+                  <div className="mt-3 pt-3 flex items-center justify-between" style={{ borderTop: '1px solid var(--border)' }}>
+                    <span className="text-sm font-semibold" style={{ color: 'var(--danger)' }}>Debe: ${sale.difference.toFixed(2)}</span>
+                    <button
+                      onClick={() => handleCancelDebt(sale.id)}
+                      className="px-2 py-1 rounded text-xs font-medium transition-opacity hover:opacity-80"
+                      style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 15%, var(--bg))', color: 'var(--accent)' }}
+                    >
+                      Marcar pagado
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })}
